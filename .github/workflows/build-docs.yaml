@@ -1,0 +1,37 @@
+name: "Build Linux PDF Documentations"
+
+on:
+  push:
+    branches: [senpai]
+    paths:
+      - ".github/workflows/build-docs.yaml"
+  workflow_dispatch:
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Linux source code
+        uses: actions/checkout@v6
+        with:
+          repository: torvalds/linux
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential asciidoc dblatex graphviz \
+            texlive-latex-base texlive-latex-extra texlive-fonts-recommended \
+            latexmk librsvg2-bin imagemagick \
+            python3-sphinx python3-pip
+          pip3 install -r Documentation/sphinx/requirements.txt
+
+      - name: Build PDF documentation
+        run: |
+          make defconfig
+          make pdfdocs || true
+
+      - name: Upload PDF documentation
+        uses: actions/upload-artifact@v7
+        with:
+          name: linux-docs-pdf
+          path: Documentation/output/*.pdf
