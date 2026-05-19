@@ -33,5 +33,5 @@ jobs:
       - name: Upload PDF documentation
         uses: actions/upload-artifact@v7
         with:
-          name: linux-docs-pdf
-          path: Documentation/output/*.pdf
+          name: linux-docs
+          path: Documentation/output/*
